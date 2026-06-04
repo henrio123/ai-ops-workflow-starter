@@ -43,3 +43,8 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pytest.ini_options]
+# Make the src-layout package importable in tests without installing it.
+pythonpath = ["src"]
+testpaths = ["tests"]
