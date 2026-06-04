@@ -1,16 +1,16 @@
-"""Snippet seeding (Phase 0 placeholder).
+"""Snippet seeding (placeholder; needs the config component, not in 3a).
 
-Reads a config's rules_source (for example configs/demo_quarry/policies/
-rules.md), splits it into snippets with source ids, embeds them through the
-EmbeddingProvider, and upserts them into the pgvector store. Seeding is generic; the
-source text and ids are supplied by the config.
+Reads a config's rules source, splits it into snippets with source ids, embeds
+them through the EmbeddingProvider, and upserts them into the vector store.
+Seeding is generic; the source text and ids are supplied by the config.
 
-Planned shape (Phase 1):
+Planned shape:
 
     def seed_from_config(config: WorkflowConfig, store: VectorStore,
                          embedding_provider: EmbeddingProvider) -> int:
         # returns number of snippets seeded
         ...
 
-No file parsing, no embedding, no logic in Phase 0.
+No file parsing, no embedding, no logic here yet. This module imports nothing
+database-related.
 """
