@@ -1,10 +1,10 @@
 # ai-ops-workflow-starter
 
-A domain-agnostic "request or document to decision" engine for operational
-workflows. You give it an operational request or document; it extracts
-structured fields, retrieves the relevant rules and policies, runs a decision
-flow, and returns a recommended decision with reasoning, an escalation flag,
-and a full audit log.
+A domain-agnostic architecture and scaffold for a "request or document to
+decision" workflow engine. The intended MVP will take an operational request or
+document, extract structured fields, retrieve relevant rules and policies, run a
+decision flow, and return a recommended decision with reasoning, an escalation
+flag, and an audit log.
 
 The core is domain-agnostic. Each client or domain is added as a **config**,
 not as new code.
@@ -15,7 +15,7 @@ not as new code.
 > data lives here. See [docs/build-phases.md](docs/build-phases.md) for what
 > is and is not built yet.
 
-## What it does
+## What the MVP is designed to do
 
 1. **Intake** an operational request or document (synthetic in this repo).
 2. **Extract** structured fields from it using a real LLM, validated with
@@ -59,7 +59,7 @@ thresholds. The core never hardcodes a domain. See
 - **LLM layer:** provider-adapter design. Phase 1 default provider is
   Anthropic. OpenAI, local, and mock providers can be added without changing
   the core workflow.
-- **Deploy target:** Docker plus Fly.io.
+- **Planned deploy target:** Docker (local containers) plus Fly.io (hosted, Phase 3).
 - **Optional later:** a small FastAPI or HTML UI and one SaaS integration
   (for example Slack).
 

@@ -12,7 +12,7 @@ document_types:
 
 retrieval:
   top_k: 4
-  embedding_model: text-embedding-default   # resolved by the embedder adapter
+  embedding_model: text-embedding-default   # resolved by the embedding provider adapter
   similarity: cosine
 
 escalation:

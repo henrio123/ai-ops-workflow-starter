@@ -1,7 +1,13 @@
-"""LLM provider and embedder interfaces (Phase 0 placeholder).
+"""LLM and embedding provider interfaces (Phase 0 placeholder).
 
-These small interfaces are the only LLM contract the core knows. Swapping
-providers is a config or environment change, not a core code change.
+Two separate sibling protocols make up the LLM contract the core knows.
+`LLMProvider` handles completion and extraction (the chat-style calls).
+`EmbeddingProvider` handles embeddings for retrieval. They are deliberately
+distinct: extraction and embeddings may use different providers, and retrieval
+must not be coupled to whichever provider does extraction. The default planned
+extraction provider for Phase 1 is Anthropic; the embedding provider is chosen
+independently and is not assumed to be Anthropic. Swapping either is a config or
+environment change, not a core code change.
 
 Planned interfaces (illustrative, implemented in Phase 1):
 
@@ -11,11 +17,12 @@ Planned interfaces (illustrative, implemented in Phase 1):
             # ask the model to fill `schema`, return a validated instance
             ...
 
-    class Embedder(Protocol):
+    class EmbeddingProvider(Protocol):
         def embed(self, texts: list[str]) -> list[list[float]]: ...
 
-A provider may implement both, or an Embedder may be a separate adapter. The
-core composes whichever it is given.
+The two protocols are implemented by separate adapters (an extraction adapter
+and an embedding adapter, which may be different vendors). The core composes
+whichever pair it is given.
 
 No logic in Phase 0.
 """

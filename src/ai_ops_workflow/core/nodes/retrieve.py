@@ -9,7 +9,7 @@ specifics.
 Planned signature (Phase 1):
 
     def retrieve(state: WorkflowState, config: WorkflowConfig,
-                 store: VectorStore, embedder: Embedder) -> WorkflowState: ...
+                 store: VectorStore, embedding_provider: EmbeddingProvider) -> WorkflowState: ...
 
 Writes an audit entry recording which snippets and sources were retrieved.
 

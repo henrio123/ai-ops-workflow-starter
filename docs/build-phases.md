@@ -40,9 +40,10 @@ The MVP is **one path that actually runs**:
 3. **LangGraph 4-node flow.** The graph wires intake to extract to retrieve to
    decide or escalate, with a conditional edge selecting the decision or
    escalation output path. State is typed.
-4. **Docker deploy.** A Dockerfile builds the app and a compose file brings up
-   the app plus a pgvector-enabled Postgres so the whole flow runs in
-   containers locally. This proves the deploy path even before a hosted URL.
+4. **Dockerized local run.** A Dockerfile builds the app and a compose file
+   brings up the app plus a pgvector-enabled Postgres so the whole flow runs in
+   containers locally. This proves the containerized local run path before any
+   hosted deployment.
 
 Also in Phase 1:
 

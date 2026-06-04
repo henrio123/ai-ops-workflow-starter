@@ -113,9 +113,11 @@ nodes call, kept thin so the graph stays the 4-node flow that was locked.
   keeps the deploy small.
 - **Provider-adapter LLM layer.** See below. Decouples the workflow from any
   single vendor.
-- **Docker plus Fly.io.** Docker gives a reproducible image with the app and a
-  pgvector-enabled Postgres for local runs; Fly.io is a small, cheap target to
-  put the demo on a URL when Phase 3 arrives.
+- **Dockerized local run, Fly.io later.** Docker is the planned reproducible
+  local container run: one image with the app plus a pgvector-enabled Postgres,
+  so the whole flow runs in containers on a developer machine. Fly.io is the
+  planned Phase 3 hosted target, used only after the local MVP works to put the
+  demo on a URL. Phase 1 is local containers only; nothing is hosted yet.
 
 ## How the core stays domain-agnostic
 
@@ -136,45 +138,57 @@ Everything domain-specific is injected by the config:
 - the decision policy function and the escalation thresholds;
 - the prompt templates used for extraction and decision.
 
-Adding a new domain means adding a folder under `configs/` and registering it.
-No core file changes. This is the same separation discipline the project
-applies everywhere: generic engine, declarative client.
+For a domain that fits the existing engine contract, adding it means adding a
+folder under `configs/` and registering it. If a new domain needs a new generic
+capability, that belongs in the core as a deliberate feature, not as a
+per-client patch. This is the same separation discipline the project applies
+everywhere: generic engine, declarative client.
 
 ## Provider-adapter LLM design
 
-The LLM layer exposes one small interface and several implementations.
+The LLM layer exposes two small sibling protocols and several implementations.
+`LLMProvider` handles completion and extraction (the chat-style calls). A
+separate `EmbeddingProvider` handles embeddings for retrieval. They are
+deliberately distinct interfaces, not one protocol with an `embed()` method
+bolted on.
 
 ```
-              core / extract node
-                      |
-                      v
-            +-------------------+
-            |  LLMProvider      |   <- protocol / abstract base
-            |  - complete()     |
-            |  - extract()      |
-            |  - embed()        |   (or a separate Embedder protocol)
-            +-------------------+
-                /     |      \
-               v      v       v
-      Anthropic   OpenAI    Mock / Local
-      provider    provider  provider
-      (Phase 1    (later)   (tests, offline)
-       default)
+        core / extract node            core / retrieve node
+                |                                |
+                v                                v
+      +-------------------+            +----------------------+
+      |  LLMProvider      |            |  EmbeddingProvider   |
+      |  - complete()     |            |  - embed()           |
+      |  - extract()      |            +----------------------+
+      +-------------------+                /            \
+          /     |      \                  v              v
+         v      v       v          (embedding model    Mock / local
+   Anthropic OpenAI  Mock/Local     adapter; may be    embedder
+   provider  provider provider      a different vendor (tests, offline)
+   (Phase 1  (later)  (tests,        than the chat
+    default)         offline)        provider)
 ```
 
 Principles:
 
-- The core calls only the `LLMProvider` interface, never a vendor SDK
-  directly. Swapping providers is a config or environment change, not a code
-  change in the workflow.
-- The **default planned provider for Phase 1 is Anthropic.** OpenAI, a local
-  model, and a deterministic mock are designed in from the start so they can be
-  added later without touching node logic.
-- The **mock provider** is part of the design, not an afterthought: it lets the
-  graph, retrieval, and audit be exercised in tests without network calls or
-  spend.
-- Embeddings are part of this layer (either on the same interface or a sibling
-  `Embedder` protocol) so the retrieval layer also stays vendor-neutral.
+- The core's extract and decide nodes call only the `LLMProvider` interface,
+  and the retrieve node calls only the `EmbeddingProvider` interface, never a
+  vendor SDK directly. Swapping either is a config or environment change, not a
+  code change in the workflow.
+- The **default planned extraction provider for Phase 1 is Anthropic.** OpenAI,
+  a local model, and a deterministic mock are designed in from the start so
+  they can be added later without touching node logic.
+- **Extraction and embeddings may use different providers.** The embedding
+  provider is chosen independently of the chat or completion provider, because
+  the best or cheapest embedding model may come from a different vendor, and
+  retrieval must not be coupled to whichever provider does extraction. The repo
+  does not assume Anthropic supplies embeddings.
+- Keeping `EmbeddingProvider` separate means the retrieval layer stays
+  vendor-neutral on its own terms: a change of chat provider does not force a
+  change of embedding model, and vice versa.
+- The **mock provider** is part of the design, not an afterthought: a mock
+  `LLMProvider` and a mock `EmbeddingProvider` let the graph, retrieval, and
+  audit be exercised in tests without network calls or spend.
 
 ## Audit as a cross-cutting concern
 

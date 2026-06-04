@@ -52,6 +52,9 @@ the interface.
   `data/private/` path reserved for local real data that must stay out of git.
 - A future pre-commit hook (Phase 1 or later) can scan staged files for common
   secret patterns. Until then, the rule is enforced by review discipline.
+- Phase 1 should add a simple local secret-scan check or pre-commit hook for
+  common secret patterns, `.env` leakage, private data paths, and obvious
+  real-person identifiers in demo files.
 - If real data is committed by mistake, treat it as a leak: rotate any exposed
   secret, and scrub history before the repo is made public.
 
@@ -61,5 +64,6 @@ Extraction sends request or document text to an LLM provider. For the public
 demo this is synthetic text only. For real engagements, the provider choice and
 its data-retention terms are part of the deployment decision, handled in the
 private deployment, and are out of scope for this public repo. The
-provider-adapter design makes it possible to switch to a local or
-zero-retention provider when an engagement requires it.
+provider-adapter design makes it possible to switch to a local provider or a
+provider/deployment mode with stricter retention requirements when an engagement
+requires it.

@@ -35,7 +35,7 @@ fields (final field names are set in Phase 1):
 | `decision_policy`      | `Callable[..., Decision]`    | Pure function mapping fields plus rules to a decision. |
 | `decision_prompt`      | `str` (template, optional)   | Prompt template if the decision step uses the LLM.     |
 | `escalation_thresholds`| `EscalationThresholds`       | Confidence floor and rule triggers for human review.   |
-| `retrieval`            | `RetrievalSettings`          | top-k, embedding model id, similarity metric.          |
+| `retrieval`            | `RetrievalSettings`          | top-k, embedding provider/model (via `EmbeddingProvider`), similarity metric. |
 
 The core treats `extraction_schema` and `decision_policy` as opaque callables
 and types. It never inspects domain meaning; it only runs them.
@@ -52,7 +52,10 @@ document_types:
   - delivery_request
 retrieval:
   top_k: 4
-  embedding_model: text-embedding-default   # resolved by the embedder adapter
+  # The embedding model is resolved by the EmbeddingProvider, a sibling of the
+  # chat/completion LLMProvider. It can be a different provider than the one
+  # used for extraction; retrieval is not coupled to the chat provider.
+  embedding_model: text-embedding-default
   similarity: cosine
 escalation:
   min_confidence: 0.70        # below this, escalate to a human

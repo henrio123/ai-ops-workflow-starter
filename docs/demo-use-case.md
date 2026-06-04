@@ -85,9 +85,24 @@ escalation cases, which shows the core's value (consistent triage with an audit
 trail) without needing a regulated or sensitive domain. It is also easy to keep
 entirely synthetic.
 
+## What this demo is not
+
+This is not quarry management software. The quarry workflow is only a synthetic
+example config used to demonstrate the reusable core: extraction, retrieval,
+decision routing, escalation, and audit. The business value is the pattern, not
+the quarry domain.
+
+## Planned Phase 1 samples
+
+- `sample_escalate_new_customer.json`: new customer, 250 t, in radius. Expected
+  outcome: `escalate`, citing `CREDIT-03`.
+- `sample_confirm_repeat_customer.json`: repeat customer, 40 t, in radius,
+  stocked material. Expected outcome: `confirm`, citing price and delivery
+  snippets.
+
 ## Other configs plug into the same core
 
-The same core serves other domains by adding a config, with no core change:
+The same core serves other domains by adding a config:
 
 - **Credit or underwriting**: extract applicant and loan fields, retrieve
   lending policy, recommend approve or refer, escalate thin-file or
@@ -95,6 +110,8 @@ The same core serves other domains by adding a config, with no core change:
 - **Insurance or claims**: extract claim fields, retrieve coverage and
   exclusion rules, recommend pay, request docs, or refer to an adjuster.
 
-Each is a new folder under `configs/`, a new schema, a new rules source, and a
-new decision policy. The intake, extract, retrieve, decide, output, and audit
-machinery is shared.
+For a domain that fits the existing engine contract, adding it means adding a
+folder under `configs/` and registering it: a new schema, a new rules source,
+and a new decision policy, while the intake, extract, retrieve, decide, output,
+and audit machinery is shared. If a new domain needs a new generic capability,
+that belongs in the core as a deliberate feature, not as a per-client patch.

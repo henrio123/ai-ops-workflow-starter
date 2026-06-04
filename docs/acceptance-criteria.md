@@ -31,14 +31,17 @@ recorded in an audit log.
 6. **Audit log complete.** For every run, the audit record contains input,
    extracted fields, retrieved context with sources, the decision or
    escalation, reasoning, and confidence. No step is missing.
-7. **Docker run.** `docker compose up` brings up the app and a pgvector-enabled
-   Postgres, and the same end-to-end run succeeds inside the containers.
+7. **Dockerized local run.** `docker compose up` brings up the app and a
+   pgvector-enabled Postgres locally, and the same end-to-end run succeeds
+   inside the containers.
 
 ## Quality and safety criteria
 
-8. **Config-driven, no domain in core.** Grepping the `core/`, `llm/`, and
-   `retrieval/` packages finds no domain terms (quarry, order, customer,
-   claim). All domain specifics live under `configs/demo_quarry/`.
+8. **Config-driven, no demo-domain logic in core.** Grepping the `core/`,
+   `llm/`, and `retrieval/` packages finds no demo-specific terms such as
+   `quarry`, `aggregate`, `gravel`, `tonnes`, or `Kruusakarjaar`. Generic
+   operational terms such as `request`, `document`, `source`, `customer`, or
+   `order` are allowed only if they are domain-neutral.
 9. **Provider swap is config or env only.** Switching from the Anthropic
    provider to the mock provider requires no change to any file under `core/`.
 10. **Synthetic data only.** No real data anywhere in the repo; `.env` is
@@ -46,16 +49,20 @@ recorded in an audit log.
 11. **Validation failure is handled.** When the LLM returns fields that fail
     the Pydantic schema, the system retries or lowers confidence and can
     escalate, rather than crashing.
+12. **Structured output contract.** The final result is JSON-serializable and
+    follows a typed Pydantic model with fields for `request_id`, `config_name`,
+    `outcome`, `reasoning`, `confidence`, `citations`, `escalation_flag`, and
+    `audit_reference`.
 
 ## Test criteria
 
-12. **Smoke test passes.** A test runs the full graph with the mock provider
+13. **Smoke test passes.** A test runs the full graph with the mock provider
     end to end and asserts a well-formed result and a complete audit record.
-13. **Escalation test passes.** A test feeds a rule-tripping synthetic sample
+14. **Escalation test passes.** A test feeds a rule-tripping synthetic sample
     and asserts the outcome is `escalate` with the expected rule cited.
-14. **Schema test passes.** A test asserts the extractor output validates
+15. **Schema test passes.** A test asserts the extractor output validates
     against `AggregateOrderFields` and that a malformed payload is rejected.
-15. **Tests need no network or spend.** The full test suite runs with the mock
+16. **Tests need no network or spend.** The full test suite runs with the mock
     provider and a local or test Postgres, with no real LLM call.
 
 ## Out of scope for MVP acceptance
