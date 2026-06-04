@@ -1,0 +1,32 @@
+# docker-compose (Phase 0 scaffold).
+# Brings up the app plus a pgvector-enabled Postgres so the whole flow runs in
+# containers locally. Listed and structured, not run in Phase 0. Do not run
+# docker compose up yet.
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ai_ops
+      POSTGRES_PASSWORD: change_me_local_only   # local dev placeholder only
+      POSTGRES_DB: ai_ops
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - db
+    environment:
+      # Real secrets come from the environment or a .env file, never committed.
+      DATABASE_URL: postgresql://ai_ops:change_me_local_only@db:5432/ai_ops
+      LLM_PROVIDER: mock           # offline default; set to anthropic for live
+      ANTHROPIC_API_KEY: ""        # supplied at runtime, never committed
+    # Phase 1: command runs one synthetic sample through the flow.
+
+volumes:
+  pgdata:

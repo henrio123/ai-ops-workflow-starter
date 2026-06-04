@@ -1,0 +1,11 @@
+{
+  "_note": "SYNTHETIC demo data. Fictional operator Demo Kruusakarjaar OU. Not real.",
+  "document_type": "aggregate_order",
+  "source": "web_form",
+  "raw_text": "Hi, this is Mart from Synthetic Builders OU. We would like to order 250 tonnes of 0-16 crushed gravel, delivered to the Demo site about 22 km from the quarry. We have not ordered from you before. Preferred delivery next Tuesday. Thanks.",
+  "expected_demo_outcome": {
+    "outcome": "escalate",
+    "reason_rule": "CREDIT-03",
+    "why": "New customer ordering above 200 t must be on prepayment, so the order is escalated for a credit check rather than auto-confirmed."
+  }
+}

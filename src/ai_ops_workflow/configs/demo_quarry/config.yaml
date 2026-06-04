@@ -1,0 +1,27 @@
+# demo_quarry config (Phase 0 scaffold, synthetic data only)
+# Fictional operator "Demo Kruusakarjaar OU". Nothing here is real.
+# The declarative part of the config. Code parts (extraction schema, decision
+# policy) live in schemas.py and policy.py and are wired in __init__.py.
+
+name: demo_quarry
+description: Synthetic quarry order intake and approval demo.
+
+document_types:
+  - aggregate_order
+  - delivery_request
+
+retrieval:
+  top_k: 4
+  embedding_model: text-embedding-default   # resolved by the embedder adapter
+  similarity: cosine
+
+escalation:
+  min_confidence: 0.70          # below this confidence, escalate to a human
+  always_escalate_when:
+    - order_volume_tonnes_gt: 500
+    - new_customer_over_credit_volume: true
+
+prompts:
+  # Phase 1 will add the actual template files under this config directory.
+  extraction_template_file: prompts/extraction.txt
+  decision_template_file: prompts/decision.txt

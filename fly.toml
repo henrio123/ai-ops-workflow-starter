@@ -1,0 +1,23 @@
+# fly.toml (Phase 0 scaffold).
+# Deploy target for Phase 3 only. Listed and structured, not deployed in Phase
+# 0 or Phase 1. Do not run fly deploy yet. App name and region are placeholders.
+
+app = "ai-ops-workflow-starter-demo"
+primary_region = "arn"
+
+[build]
+  dockerfile = "docker/Dockerfile"
+
+[env]
+  LLM_PROVIDER = "mock"           # switched to a live provider at deploy time
+  CONFIG_NAME = "demo_quarry"
+
+# Phase 3: secrets (ANTHROPIC_API_KEY, DATABASE_URL) are set via `fly secrets`,
+# never committed here.
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0

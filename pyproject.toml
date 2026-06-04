@@ -1,0 +1,45 @@
+# pyproject.toml
+# Phase 0: dependencies are LISTED as intended only. Do NOT install in Phase 0
+# (no pip install, poetry install, or uv sync). Versions are indicative and
+# will be pinned in Phase 1.
+
+[project]
+name = "ai-ops-workflow-starter"
+version = "0.0.0"
+description = "Domain-agnostic request-or-document to decision engine (config-driven AI operations workflow)."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+
+# Intended runtime dependencies (listed, not installed in Phase 0).
+dependencies = [
+    "langgraph>=0.2",        # 4-node agent flow: intake, extract, retrieve, decide
+    "pydantic>=2.6",         # typed extraction schemas and models (v2)
+    "anthropic>=0.40",       # default Phase 1 LLM provider adapter
+    "pgvector>=0.3",         # pgvector client helpers for the vector store
+    "psycopg[binary]>=3.1",  # Postgres driver
+    "sqlalchemy>=2.0",       # table mapping for snippets and audit
+    "pyyaml>=6.0",           # config.yaml loading
+    "python-dotenv>=1.0",    # load .env for local runs
+]
+
+[project.optional-dependencies]
+# Added as later phases need them (listed for intent, not installed).
+openai = ["openai>=1.0"]                 # Phase 2 second provider adapter
+api = ["fastapi>=0.110", "uvicorn>=0.29"]  # Phase 3 optional UI/API
+dev = [
+    "pytest>=8.0",
+    "mypy>=1.8",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+# Phase 1 wires this entry point; defined here for intent.
+ai-ops-workflow = "ai_ops_workflow.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
