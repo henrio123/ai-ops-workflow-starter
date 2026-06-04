@@ -25,6 +25,7 @@ dependencies = [
 
 [project.optional-dependencies]
 # Added as later phases need them (listed for intent, not installed).
+postgres = ["psycopg[binary]>=3,<4"]     # pgvector backend driver (component 3b)
 openai = ["openai>=1.0"]                 # Phase 2 second provider adapter
 api = ["fastapi>=0.110", "uvicorn>=0.29"]  # Phase 3 optional UI/API
 dev = [
@@ -48,3 +49,4 @@ where = ["src"]
 # Make the src-layout package importable in tests without installing it.
 pythonpath = ["src"]
 testpaths = ["tests"]
+markers = ["integration: requires a live Postgres with pgvector (set DATABASE_URL)"]

@@ -1,13 +1,15 @@
 """Retrieval layer.
 
 Component 3a provides the retrieval abstraction (the VectorStore protocol) and a
-deterministic in-memory implementation for offline tests. The pgvector backend
-is component 3b and will implement the same VectorStore protocol behind the same
-contract. This package is import-safe: it pulls in no database client or vendor
-SDK. The embedding provider comes from the LLM layer so retrieval stays
-vendor-neutral.
+deterministic in-memory implementation for offline tests. Component 3b adds
+PgVectorStore, a real pgvector-backed implementation behind the same protocol.
+The pgvector backend takes an injected connection and never opens one itself, so
+importing this package stays import-safe: it pulls in no database client or
+vendor SDK at load time. The embedding provider comes from the LLM layer so
+retrieval stays vendor-neutral.
 """
 
+from .pgvector_store import PgVectorStore
 from .vectorstore import (
     InMemoryVectorStore,
     SnippetToIndex,
@@ -21,5 +23,6 @@ __all__ = [
     "VectorSearchQuery",
     "VectorStore",
     "InMemoryVectorStore",
+    "PgVectorStore",
     "cosine_similarity",
 ]
